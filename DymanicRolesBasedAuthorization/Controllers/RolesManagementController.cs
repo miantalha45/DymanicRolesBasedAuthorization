@@ -72,7 +72,7 @@ namespace DymanicRolesBasedAuthorization.Controllers
         }
 
         // 3. Get all roles
-        [HttpGet]
+        [HttpGet("GetAllRoles")]
         public IActionResult GetAllRoles()
         {
             var roles = _roleManager.Roles.Select(r => new { r.Id, r.Name }).ToList();
@@ -155,10 +155,10 @@ namespace DymanicRolesBasedAuthorization.Controllers
         }
 
         // 7. Get user roles
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserRoles(string userId)
+        [HttpGet("user/{email}")]
+        public async Task<IActionResult> GetUserRoles(string email)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
@@ -169,10 +169,10 @@ namespace DymanicRolesBasedAuthorization.Controllers
         }
 
         // 8. Remove role from user
-        [HttpDelete("user/{userId}/role/{roleName}")]
-        public async Task<IActionResult> RemoveRoleFromUser(string userId, string roleName)
+        [HttpDelete("user/{email}/role/{roleName}")]
+        public async Task<IActionResult> RemoveRoleFromUser(string email, string roleName)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
