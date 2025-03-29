@@ -10,7 +10,7 @@ namespace DymanicRolesBasedAuthorization.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]  // Only admins can manage roles/permissions
+    [Authorize(Roles = "Admin")]
     public class RolesManagementController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -27,7 +27,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             _dbContext = dbContext;
         }
 
-        // 1. Create a new role
         [HttpPost("create")]
         public async Task<IActionResult> CreateRole(string roleName)
         {
@@ -46,7 +45,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return BadRequest(new { Errors = result.Errors });
         }
 
-        // 2. Assign role to user
         [HttpPost("assign")]
         public async Task<IActionResult> AssignRoleToUser(string email, string roleName)
         {
@@ -71,7 +69,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return BadRequest(new { Errors = result.Errors });
         }
 
-        // 3. Get all roles
         [HttpGet("GetAllRoles")]
         public IActionResult GetAllRoles()
         {
@@ -79,7 +76,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return Ok(roles);
         }
 
-        // 4. Assign API permission to role
         [HttpPost("permissions")]
         public async Task<IActionResult> AssignApiPermission(RoleApiPermissionDto dto)
         {
@@ -97,7 +93,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
                 Description = dto.Description
             };
 
-            // Check for duplicate
             var exists = await _dbContext.tblRoleApiPermissions
                 .AnyAsync(p => p.RoleName == dto.RoleName &&
                              p.Endpoint == dto.Endpoint &&
@@ -114,7 +109,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return Ok(new { Message = "API permission assigned to role successfully" });
         }
 
-        // 5. Get permissions for a role
         [HttpGet("permissions/{roleName}")]
         public async Task<IActionResult> GetRolePermissions(string roleName)
         {
@@ -138,7 +132,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return Ok(permissions);
         }
 
-        // 6. Delete permission
         [HttpDelete("permissions/{id}")]
         public async Task<IActionResult> RemovePermission(int id)
         {
@@ -154,7 +147,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return Ok(new { Message = "Permission removed successfully" });
         }
 
-        // 7. Get user roles
         [HttpGet("user/{email}")]
         public async Task<IActionResult> GetUserRoles(string email)
         {
@@ -168,7 +160,6 @@ namespace DymanicRolesBasedAuthorization.Controllers
             return Ok(roles);
         }
 
-        // 8. Remove role from user
         [HttpDelete("user/{email}/role/{roleName}")]
         public async Task<IActionResult> RemoveRoleFromUser(string email, string roleName)
         {
